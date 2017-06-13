@@ -22,7 +22,7 @@ $(document).ready(function() {
     firstTrainTime = moment(firstTrainTime).minute(parseInt(firstTrain.slice(firstTrain.indexOf(":") + 1)));
     var freq = $("#freq").val().trim();
     checkTime(firstTrainTime, freq);
-    var nextTrain = moment(firstTrainTime).minute(diffTime);
+    var nextTrain = moment(firstTrainTime);
     var localDiffTime = (moment(nextTrain).diff(moment(), "minutes"));
     database.ref().push({
       trainName: trainName,
@@ -35,11 +35,11 @@ $(document).ready(function() {
 
   function checkTime(firstTrainTime, freq) {
     diffTime = moment(firstTrainTime).diff(moment(), "minutes");
+    console.log(diffTime);
     if (diffTime < 0) {
       firstTrainTime = firstTrainTime.add(freq, "minutes");
       checkTime(firstTrainTime, freq)
     } else {
-      firstTrainTime = firstTrainTime.add(freq, "minutes");
       diffTime = moment(firstTrainTime).diff(moment(), "minutes");
     }
   };
