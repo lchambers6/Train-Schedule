@@ -35,7 +35,6 @@ $(document).ready(function() {
 
   function checkTime(firstTrainTime, freq) {
     diffTime = moment(firstTrainTime).diff(moment(), "minutes");
-    console.log(diffTime);
     if (diffTime < 0) {
       firstTrainTime = firstTrainTime.add(freq, "minutes");
       checkTime(firstTrainTime, freq)
@@ -43,7 +42,6 @@ $(document).ready(function() {
       diffTime = moment(firstTrainTime).diff(moment(), "minutes");
     }
   };
-
 
   database.ref().on("child_added", function(snapshot) {
     $("#trainSchedule").append("<tr><td>" + snapshot.val().trainName + "</td><td>" + snapshot.val().destination + "</td><td>" + snapshot.val().freq + "</td><td>" + snapshot.val().nextArrival + "</td><td>" + snapshot.val().minsAway + "</td></tr>");
