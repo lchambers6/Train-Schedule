@@ -12,6 +12,7 @@ $(document).ready(function() {
   firebase.initializeApp(config);
   var database = firebase.database();
   var currTime = moment();
+  var diffTime = 0;
 
 	$('#submitButton').on('click', function() {
     var trainName = $("#trainName").val().trim();
@@ -20,8 +21,8 @@ $(document).ready(function() {
     var firstTrainTime = moment().hour(parseInt(firstTrain.slice(0, firstTrain.indexOf(":"))));
     firstTrainTime = moment(firstTrainTime).minute(parseInt(firstTrain.slice(firstTrain.indexOf(":") + 1)));
     var freq = $("#freq").val().trim();
-    var diffTime = moment().diff(moment(firstTrainTime), "minutes");
-    var nextTrain = moment(firstTrainTime).minute(diffTime-(diffTime % freq) + parseInt(freq));
+    checkTime(firstTrainTime, freq);
+    var nextTrain = moment(firstTrainTime).minute(diffTime);
     var localDiffTime = (moment(nextTrain).diff(moment(), "minutes"));
     database.ref().push({
       trainName: trainName,
@@ -31,6 +32,17 @@ $(document).ready(function() {
       minsAway: localDiffTime
     });
 	});
+
+  function checkTime(firstTrainTime, freq) {
+    diffTime = moment(firstTrainTime).diff(moment(), "minutes");
+    if (diffTime < 0) {
+      firstTrainTime = firstTrainTime.add(freq, "minutes");
+      checkTime(firstTrainTime, freq)
+    } else {
+      firstTrainTime = firstTrainTime.add(freq, "minutes");
+      diffTime = moment(firstTrainTime).diff(moment(), "minutes");
+    }
+  };
 
 
   database.ref().on("child_added", function(snapshot) {
